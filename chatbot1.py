@@ -34,7 +34,7 @@ def upload_ph(page):
     ready_2_send = json.loads(uploaded_photo)
     sent = api.photos.saveMessagesPhoto(photo = ready_2_send['photo'], server = ready_2_send['server'], hash = ready_2_send['hash'])            #saving uploaded photo in VK
     sent = sent[0]
-    api.messages.send(peer_id = prid, random_id = 0, message = str(sent[0]))
+    api.messages.send(peer_id = prid, random_id = 0, message = sent)
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
 try:            #online may be already enabled
