@@ -22,7 +22,7 @@ def fwd(prid, cmids):
     return json.dumps(x)
 
 def upload_ph(page):
-    print(page.images)
+    api.messages.send(peer_id = prid, random_id = 0, message = page.images)
     for i in range(len(page.images)):           #searching for .jpg format image in wiki image list
         if '.jpg' in page.images[i]:
             image_url = page.images[i]
