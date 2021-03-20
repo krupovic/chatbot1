@@ -34,7 +34,10 @@ def upload_ph(page):
     sent = sent[0]
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
-api.groups.enableOnline(group_id = "203345016")             #enabling community online
+try:            #online may be already enabled
+    api.groups.enableOnline(group_id = "203345016")             #enabling community online
+except Exception:
+    pass
 
 while True:
     for event in longpoll.listen():         #listening for longpoll api requests
