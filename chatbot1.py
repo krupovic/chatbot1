@@ -34,7 +34,7 @@ def upload_ph(page):
     sent = sent[0]
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
-api.groups.enableOnline(group_id = "203345016")
+api.groups.enableOnline(group_id = "203345016")             #enabling community online
 
 while True:
     for event in longpoll.listen():         #listening for longpoll api requests
@@ -74,7 +74,7 @@ while True:
 
             if 'бот выкл' in txt.lower() and event.message['from_id'] == 143757001:
                 api.messages.send(peer_id = prid, random_id = 0, message = 'Уже вырубаюсь, хозяин!!!', forward = fwd(prid, cmid))
-                api.groups.disableOnline("203345016")
+                api.groups.disableOnline(group_id = "203345016")            #disabling community online
                 sys.exit()          #force turnoff
             elif 'бот выкл' in event.message['text'].lower() and event.message['from_id'] != 143757001:
                 api.messages.send(peer_id = prid, random_id = 0, message = 'Ты не хозяин, не приказывай мне!', forward = fwd(prid, cmid))
