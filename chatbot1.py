@@ -22,16 +22,14 @@ def fwd(prid, cmids):
     return json.dumps(x)
 
 def upload_ph(page):
-    json_data = json.loads(requests.get('http://ru.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&titles='+title).text)
-    image_url = list(json_data['query']['pages'].values())[0]['original']['source'] 
+    json_data = json.loads(requests.get('http://ru.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&titles='+page.title).text)
+    image_url = list(json_data['query']['pages'].values())[0]['original']['source']
     urllib.request.urlretrieve(image_url, image_url.split('/')[-1])             #downloading image
-#    urllib.request.urlretrieve(image_url, filename)             #downloading image
     vk_upload_url = api.photos.getMessagesUploadServer(peer_id = prid)['upload_url']            #getting server upload url
-    files = {'photo': open(filename, 'rb')}
+    files = {'photo': open(image_url.split('/')[-1], 'rb')}
     uploaded_photo = (requests.post(vk_upload_url, files = files)).text             #uploading photo to server and getting reply
     ready_2_send = json.loads(uploaded_photo)
-    sent = api.photos.saveMessagesPhoto(photo = ready_2_send['photo'], server = ready_2_send['server'], hash = ready_2_send['hash'])            #saving uploaded photo in VK
-    sent = sent[0]
+    sent = (api.photos.saveMessagesPhoto(photo = ready_2_send['photo'], server = ready_2_send['server'], hash = ready_2_send['hash']))[0]            #saving uploaded photo in VK
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
 try:            #online may be already enabled
