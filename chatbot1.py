@@ -7,7 +7,9 @@ import json
 import urllib.request
 import requests
 
-vk = vk_api.VkApi(token='d0d4c5923dec69c9927712772f9ece9ce681a3e1cb831cf344383f1247d36503ed1ebcc463067b83c02bd')
+token = open('closed.txt').readline()
+
+vk = vk_api.VkApi(token=token)
 vk._auth_token()
 api = vk.get_api()
 longpoll = VkBotLongPoll(vk, "203345016")           #authorizing to vk with token & community id
@@ -34,10 +36,7 @@ def upload_ph(page):
     sent = sent[0]
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
-try:            #online may be already enabled
-    api.groups.enableOnline(group_id = "203345016")             #enabling community online
-except Exception:
-    pass
+api.groups.enableOnline(group_id = "203345016")             #enabling community online
 
 while True:
     for event in longpoll.listen():         #listening for longpoll api requests

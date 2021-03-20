@@ -1,2 +1,4 @@
-**/*.jpg
-!/public/assets/images/*.jpg
+$ cat .gitignore
+
+closed.txt
+*.jpg
