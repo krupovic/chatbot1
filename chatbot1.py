@@ -45,6 +45,17 @@ while True:
             prid = event.message['peer_id']
             cmid = event.message['conversation_message_id']
             row_txt = txt.split('\n')
+            
+            if 'Статистика проведённых игр в беседе' in event.message['text']:
+                for i in range(len(row_txt)):
+                    if 'М.Калинина' in row_txt[i]:
+                        if i - 2 == 1:
+                            b = 'Маринка сейчас на первом месте, но это ненадолго :))'
+                        else:
+                            b = 'Маринка сейчас на ' + str(i-2) + ' месте =)))'
+                        api.messages.send(peer_id = prid, random_id = 0, message = b)
+#                        api.messages.send(peer_id = event.message['peer_id'], random_id = 0, attachment = 'photo-203345016_457239017')
+
 
             if 'бот' and 'стату' in txt.lower():
                 api.messages.send(peer_id = prid, random_id = 0, message = '!статистика 15')
@@ -64,16 +75,7 @@ while True:
                 except Exception:
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Не получается найти указанный запрос =)', forward = fwd(prid, cmid))            #page not found
                     
-            if 'Статистика проведённых игр в беседе' in event.message['text']:
-                for i in range(len(row_txt)):
-                    if 'М.Калинина' in row_txt[i]:
-                        if i - 2 == 1:
-                            b = 'Маринка сейчас на первом месте, но это ненадолго :))'
-                        else:
-                            b = 'Маринка сейчас на ' + str(i-2) + ' месте =)))'
-                        api.messages.send(peer_id = prid, random_id = 0, message = b)
-#                        api.messages.send(peer_id = event.message['peer_id'], random_id = 0, attachment = 'photo-203345016_457239017')
-
+            
             if 'бот выкл' in txt.lower() and event.message['from_id'] == 143757001:
                 api.messages.send(peer_id = prid, random_id = 0, message = 'Уже вырубаюсь, хозяин!!!', forward = fwd(prid, cmid))
                 api.groups.disableOnline(group_id = "203345016")            #disabling community online
