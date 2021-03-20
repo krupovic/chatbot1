@@ -22,16 +22,6 @@ def fwd(prid, cmids):
     return json.dumps(x)
 
 def upload_ph(page):
-'''
-    api.messages.send(peer_id = prid, random_id = 0, message = page.images)
-    for i in range(len(page.images)):           #searching for .jpg format image in wiki image list
-        if '.jpg' in page.images[i]:
-            image_url = page.images[i]
-            filename = image_url.split('/')[-1]             #taking file name from image url
-            break
-'''
-    
-    response  = requests.get(WIKI_REQUEST+page.title)
     json_data = json.loads(requests.get('http://ru.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&titles='+title).text)
     image_url = list(json_data['query']['pages'].values())[0]['original']['source'] 
     urllib.request.urlretrieve(image_url, image_url.split('/')[-1])             #downloading image
