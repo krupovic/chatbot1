@@ -15,19 +15,19 @@ api = vk.get_api()
 longpoll = VkBotLongPoll(vk, "203345016")           #authorizing to vk with token & community id
 
 def fwd(prid, cmids):
-    x = {}
-    x['peer_id'] = prid
-    x['conversation_message_ids'] = [cmids]
-    x['is_reply'] = 1
-    return json.dumps(x)
+    x = {}					#creating empty dict()
+    x['peer_id'] = prid				#adding message peer id to dict
+    x['conversation_message_ids'] = [cmids]	#adding id's of messages needed to reply to dict
+    x['is_reply'] = 1				#adding flag of replying to message (forward if 0)
+    return json.dumps(x)			#making a JSON file from dict
 
 def upload_ph(page):
-    json_data = json.loads(requests.get('http://ru.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&titles='+page.title).text)
-    image_url = list(json_data['query']['pages'].values())[0]['original']['source']
-    urllib.request.urlretrieve(image_url, image_url.split('/')[-1])             #downloading image
-    vk_upload_url = api.photos.getMessagesUploadServer(peer_id = prid)['upload_url']            #getting server upload url
-    files = {'photo': open(image_url.split('/')[-1], 'rb')}
-    uploaded_photo = (requests.post(vk_upload_url, files = files)).text             #uploading photo to server and getting reply
+    json_data = json.loads(requests.get('http://ru.wikipedia.org/w/api.php?action=query&prop=pageimages&format=json&piprop=original&titles='+page.title).text)	#finding the page with the url needed			
+    image_url = list(json_data['query']['pages'].values())[0]['original']['source']			#cropping image url 
+    urllib.request.urlretrieve(image_url, image_url.split('/')[-1])             			#downloading image
+    vk_upload_url = api.photos.getMessagesUploadServer(peer_id = prid)['upload_url']            	#receiving server upload url
+    files = {'photo': open(image_url.split('/')[-1], 'rb')}						#opening photo to upload
+    uploaded_photo = (requests.post(vk_upload_url, files = files)).text             			#uploading photo to server and receiving reply
     ready_2_send = json.loads(uploaded_photo)
     sent = (api.photos.saveMessagesPhoto(photo = ready_2_send['photo'], server = ready_2_send['server'], hash = ready_2_send['hash']))[0]            #saving uploaded photo in VK
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
