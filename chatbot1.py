@@ -135,7 +135,7 @@ while True:
                         api.messages.send(
                             peer_id = prid,
                             random_id = 0,
-                            message = ('No such parameter as "' + txt.split()[0] + '" in config.json.')
+                            message = ('No such parameter as "' + txt.split()[0] + '" in config.json.'),
                             forward = fwd(prid, cmid))
                             
 
