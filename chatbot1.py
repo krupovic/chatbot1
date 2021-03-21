@@ -7,7 +7,7 @@ import json
 import urllib.request
 import requests
 
-token = open('/home/pi/Python-3.8.0/chatbot1/closed.txt').readline()
+token = open('/home/pi/Python-3.8.0/chatbot1/closed.txt').readline()			#opening config file and transforming it into dict
 
 vk = vk_api.VkApi(token=token)
 vk._auth_token()
@@ -118,20 +118,20 @@ while True:
                         message = 'Победил город, а нагнул всех - [id362871142|WashedKing]!!!',
                         forward = fwd(prid, cmid),
                         attachment = 'audio-2001462885_81462885')
-                if txt.lower() == 'edit cfg' and event.message['from_id'] == 143757001:
-                    api.messages.send(peer_id = prid, random_id = 0, message = 'Make some changes in config.json:', forward = fwd(prid, cmid))
-                if event.message['reply_message']['text'] ==  'Make some changes in config.json:' and event.message['from_id'] == 143757001:
-                    if txt.split()[0] in config:
-                        config[txt.split()[0]] = int(txt.split()[1])
-                        cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')
-                        cfg.write(json.dumps(config))
-                        cfg.close()
-                        api.messages.send(
+                if txt.lower() == 'edit cfg' and event.message['from_id'] == 143757001:				#checking for config edit request
+                    api.messages.send(peer_id = prid, random_id = 0, message = 'Make some changes in config.json:', forward = fwd(prid, cmid))			#sending editing notification
+                if event.message['reply_message']['text'] ==  'Make some changes in config.json:' and event.message['from_id'] == 143757001:			#checking that user message contains config edit
+                    if txt.split()[0] in config:			#checking if user typed an unexisting parameter
+                        config[txt.split()[0]] = int(txt.split()[1])	#changing config dict due to user changes
+                        cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
+                        cfg.write(json.dumps(config))						#saving changes to config.json
+                        cfg.close()								#saving changes to config.json
+                        api.messages.send(							
                             peer_id = prid,
                             random_id = 0,
-                            message = ('Parameter "' + txt.split()[0] + '" successfully switched to ' + txt.split()[1] + '.'),
+                            message = ('Parameter "' + txt.split()[0] + '" successfully switched to ' + txt.split()[1] + '.'), #notification that config file has been edited 
                             forward = fwd(prid, cmid))
-                        api.messages.send(peer_id = prid, random_id = 0, message = ('config.json is now ' + str(config))) 
+                        api.messages.send(peer_id = prid, random_id = 0, message = ('config.json is now ' + str(config))) 	#returning new config.json
                     else:
                         api.messages.send(
                             peer_id = prid,
