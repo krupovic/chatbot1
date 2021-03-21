@@ -129,7 +129,7 @@ while True:
                         api.messages.send(
                             peer_id = prid,
                             random_id = 0,
-                            message = ('Parameter "' + txt.split()[0] + '" succesfully switched to ' + txt.split()[1] + '.'),
+                            message = ('Parameter "' + txt.split()[0] + '" successfully switched to ' + txt.split()[1] + '.'),
                             forward = fwd(prid, cmid))
                         api.messages.send(peer_id = prid, random_id = 0, message = ('config.json is now ' + str(config))) 
                     else:
