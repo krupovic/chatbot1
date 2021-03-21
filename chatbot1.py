@@ -32,15 +32,27 @@ def upload_ph(page):
     sent = (api.photos.saveMessagesPhoto(photo = ready_2_send['photo'], server = ready_2_send['server'], hash = ready_2_send['hash']))[0]            #saving uploaded photo in VK
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
+def update_cfg(text):
+    config[txt.split()[0]] = int(txt.split()[1])	                        #changing config dict due to user changes
+    cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
+    cfg.write(json.dumps(config))						#saving changes to config.json
+    cfg.close()								        #saving changes to config.json
+    api.messages.send(							
+        peer_id = prid,
+        random_id = 0,
+        message = ('Parameter "' + txt.split()[0] + '" successfully switched to ' + txt.split()[1] + '.'),      #notification that config file has been edited 
+        forward = fwd(prid, cmid))
+    api.messages.send(peer_id = prid, random_id = 0, message = ('config.json is now ' + json.dumps(config))) 	#returning new config.json
+
 config = json.loads((open('/home/pi/Python-3.8.0/chatbot1/config.json')).read())
 
-try:            #online may be already enabled
+try:                                                            #online may be already enabled
     api.groups.enableOnline(group_id = "203345016")             #enabling community online
 except Exception:
     pass
 while True:
     try:
-        for event in longpoll.listen():         #listening for longpoll api requests
+        for event in longpoll.listen():                         #listening for longpoll api requests
             if event.type == VkBotEventType.MESSAGE_NEW:            
                 txt = event.message['text']
                 prid = event.message['peer_id']
@@ -56,7 +68,6 @@ while True:
                                 else:
                                     b = 'Маринка сейчас на ' + str(i-2) + ' месте =)))'
                                 api.messages.send(peer_id = prid, random_id = 0, message = b)
-        #                        api.messages.send(peer_id = event.message['peer_id'], random_id = 0, attachment = 'photo-203345016_457239017')
 
 
                 if 'бот' and 'стату' in txt.lower():
@@ -75,7 +86,7 @@ while True:
                         except Exception:
                             api.messages.send(peer_id = prid, random_id = 0, message = 'Не получается найти необходимое изображение =)', forward = fwd(prid, cmid))             #photo not found
                     except Exception:
-                        api.messages.send(peer_id = prid, random_id = 0, message = 'Не получается найти указанный запрос =)', forward = fwd(prid, cmid))            #page not found
+                        api.messages.send(peer_id = prid, random_id = 0, message = 'Не получается найти указанный запрос =)', forward = fwd(prid, cmid))                        #page not found
                         
                 
                 if 'бот выкл' in txt.lower() and event.message['from_id'] == 143757001:
@@ -118,20 +129,11 @@ while True:
                         message = 'Победил город, а нагнул всех - [id362871142|WashedKing]!!!',
                         forward = fwd(prid, cmid),
                         attachment = 'audio-2001462885_81462885')
-                if txt.lower() == 'edit cfg' and event.message['from_id'] == 143757001:				#checking for config edit request
+                if txt.lower() == 'edit cfg' and event.message['from_id'] == 143757001:				                                                #checking for config edit request
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Make some changes in config.json:', forward = fwd(prid, cmid))			#sending editing notification
                 if event.message['reply_message']['text'] ==  'Make some changes in config.json:' and event.message['from_id'] == 143757001:			#checking that user message contains config edit
-                    if txt.split()[0] in config:			#checking if user typed an unexisting parameter
-                        config[txt.split()[0]] = int(txt.split()[1])	#changing config dict due to user changes
-                        cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
-                        cfg.write(json.dumps(config))						#saving changes to config.json
-                        cfg.close()								#saving changes to config.json
-                        api.messages.send(							
-                            peer_id = prid,
-                            random_id = 0,
-                            message = ('Parameter "' + txt.split()[0] + '" successfully switched to ' + txt.split()[1] + '.'), #notification that config file has been edited 
-                            forward = fwd(prid, cmid))
-                        api.messages.send(peer_id = prid, random_id = 0, message = ('config.json is now ' + str(config))) 	#returning new config.json
+                    if txt.split()[0] in config:			                                                                                        #checking if user typed an unexisting parameter
+                        update_cfg(text)
                     else:
                         api.messages.send(
                             peer_id = prid,
