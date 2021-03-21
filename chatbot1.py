@@ -32,6 +32,10 @@ def upload_ph(page):
     sent = (api.photos.saveMessagesPhoto(photo = ready_2_send['photo'], server = ready_2_send['server'], hash = ready_2_send['hash']))[0]            #saving uploaded photo in VK
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
+cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json')
+config = json.loads(cfg)
+cfg.close()
+
 try:            #online may be already enabled
     api.groups.enableOnline(group_id = "203345016")             #enabling community online
 except Exception:
@@ -45,15 +49,16 @@ while True:
                 cmid = event.message['conversation_message_id']
                 row_txt = txt.split('\n')
                 
-                if 'Статистика проведённых игр в беседе' in event.message['text']:
-                    for i in range(len(row_txt)):
-                        if 'М.Калинина' in row_txt[i]:
-                            if i - 2 == 1:
-                                b = 'Маринка сейчас на первом месте, но это ненадолго :))'
-                            else:
-                                b = 'Маринка сейчас на ' + str(i-2) + ' месте =)))'
-                            api.messages.send(peer_id = prid, random_id = 0, message = b)
-    #                        api.messages.send(peer_id = event.message['peer_id'], random_id = 0, attachment = 'photo-203345016_457239017')
+                if config['ret-m-pl'] == 1:
+                    if 'Статистика проведённых игр в беседе' in event.message['text']:
+                        for i in range(len(row_txt)):
+                            if 'М.Калинина' in row_txt[i]:
+                                if i - 2 == 1:
+                                    b = 'Маринка сейчас на первом месте, но это ненадолго :))'
+                                else:
+                                    b = 'Маринка сейчас на ' + str(i-2) + ' месте =)))'
+                                api.messages.send(peer_id = prid, random_id = 0, message = b)
+        #                        api.messages.send(peer_id = event.message['peer_id'], random_id = 0, attachment = 'photo-203345016_457239017')
 
 
                 if 'бот' and 'стату' in txt.lower():
@@ -76,14 +81,16 @@ while True:
                         
                 
                 if 'бот выкл' in txt.lower() and event.message['from_id'] == 143757001:
+                    cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')
+                    cfg.write(json.dumps(config))
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Уже вырубаюсь, хозяин!!!', forward = fwd(prid, cmid))
                     api.groups.disableOnline(group_id = "203345016")            #disabling community online
                     sys.exit()          #force turnoff
-                elif 'бот выкл' in event.message['text'].lower() and event.message['from_id'] != 143757001:
+                elif 'бот выкл' in txt.lower() and event.message['from_id'] != 143757001:
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Ты не хозяин, не приказывай мне!', forward = fwd(prid, cmid))
                     
 
-                if ('Победила мафия, поздравляем!' in row_txt) and ('[id143757001|П.Крупович]' in txt):
+                if ('Победила мафия, поздравляем!' in row_txt) and ('[id143757001|П.Крупович]' in txt) and config['win-msg-p-m'] == 1:
                     api.messages.send(
                         peer_id = prid,
                         random_id = 0,
@@ -91,7 +98,7 @@ while True:
                         forward = fwd(prid, cmid),
                         attachment = 'audio-2001823365_67823365')
                     
-                if ('Победил город, поздравляем!' in row_txt) and 'id143757001' in txt:
+                if ('Победил город, поздравляем!' in row_txt) and 'id143757001' in txt and config['win-msg-p-p'] == 1:
                     api.messages.send(
                         peer_id = prid,
                         random_id = 0,
@@ -100,7 +107,7 @@ while True:
                         attachment = 'audio-2001823365_67823365')
 
                     
-                if ('Победила мафия, поздравляем!' in row_txt) and 'id362871142' in txt:
+                if ('Победила мафия, поздравляем!' in row_txt) and 'id362871142' in txt and config['win-msg-v-m'] == 1:
                     api.messages.send(
                         peer_id = prid,
                         random_id = 0,
@@ -108,13 +115,21 @@ while True:
                         forward = fwd(prid, cmid),
                         attachment = 'audio-2001462885_81462885')
                     
-                elif ('Победил город, поздравляем!' in row_txt) and 'id362871142' in txt:
+                elif ('Победил город, поздравляем!' in row_txt) and 'id362871142' in txt and config['win-msg-v-p'] == 1:
                     api.messages.send(
                         peer_id = prid,
                         random_id = 0,
                         message = 'Победил город, а нагнул всех - [id362871142|WashedKing]!!!',
                         forward = fwd(prid, cmid),
                         attachment = 'audio-2001462885_81462885')
+                if txt == 'edit cfg' and event.message['from_id'] == 143757001:
+                    api.messages.send(peer_id = prid, random_id = 0, message = 'Внесите изменения в config.json:', forward = fwd(prid, cmid))
+                    for event in longpoll.listen():
+                        if event.type == VkBotEventType.MESSAGE_NEW and event.message['from_id'] == 143757001:
+                            config[event.message['text'].split()[0]] = event.message['text'].split()[1]
+                            break
+                            
+                            
     except Exception:
         pass
 
