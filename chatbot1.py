@@ -32,9 +32,7 @@ def upload_ph(page):
     sent = (api.photos.saveMessagesPhoto(photo = ready_2_send['photo'], server = ready_2_send['server'], hash = ready_2_send['hash']))[0]            #saving uploaded photo in VK
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
-cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json')
-config = json.loads(cfg)
-cfg.close()
+config = json.loads((open('/home/pi/Python-3.8.0/chatbot1/config.json')).read())
 
 try:            #online may be already enabled
     api.groups.enableOnline(group_id = "203345016")             #enabling community online
@@ -83,6 +81,7 @@ while True:
                 if 'бот выкл' in txt.lower() and event.message['from_id'] == 143757001:
                     cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')
                     cfg.write(json.dumps(config))
+                    cfg.close()
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Уже вырубаюсь, хозяин!!!', forward = fwd(prid, cmid))
                     api.groups.disableOnline(group_id = "203345016")            #disabling community online
                     sys.exit()          #force turnoff
@@ -122,12 +121,16 @@ while True:
                         message = 'Победил город, а нагнул всех - [id362871142|WashedKing]!!!',
                         forward = fwd(prid, cmid),
                         attachment = 'audio-2001462885_81462885')
-                if txt == 'edit cfg' and event.message['from_id'] == 143757001:
-                    api.messages.send(peer_id = prid, random_id = 0, message = 'Внесите изменения в config.json:', forward = fwd(prid, cmid))
-                    for event in longpoll.listen():
-                        if event.type == VkBotEventType.MESSAGE_NEW and event.message['from_id'] == 143757001:
-                            config[event.message['text'].split()[0]] = event.message['text'].split()[1]
-                            break
+                if txt.lower() == 'edit cfg' and event.message['from_id'] == 143757001:
+                    api.messages.send(peer_id = prid, random_id = 0, message = 'Make some changes in config.json:', forward = fwd(prid, cmid))
+                if event.message['reply_message']['text'] ==  'Make some changes in config.json:' and event.message['from_id'] == 143757001:
+                    config[txt.split()[0]] = int(txt.split()[1])
+                    api.messages.send(
+                        peer_id = prid,
+                        random_id = 0,
+                        message = ('Parameter "' + txt.split()[0] + '" succesfully switched to ' + txt.split()[1] + '.'),
+                        forward = fwd(prid, cmid))
+                    
                             
                             
     except Exception:
