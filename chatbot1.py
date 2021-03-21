@@ -125,17 +125,20 @@ while True:
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Make some changes in config.json:', forward = fwd(prid, cmid))
                 if event.message['reply_message']['text'] ==  'Make some changes in config.json:' and event.message['from_id'] == 143757001:
                     if txt.split()[0] in config:
-	                config[txt.split()[0]] = int(txt.split()[1])
+                        config[txt.split()[0]] = int(txt.split()[1])
                         api.messages.send(
                             peer_id = prid,
                             random_id = 0,
                             message = ('Parameter "' + txt.split()[0] + '" succesfully switched to ' + txt.split()[1] + '.'),
                             forward = fwd(prid, cmid))
                     else:
-			api.messages.send(peer_id = prid,
-					  random_id = 0,
-					  message = ('No such parameter as ' + txt.split()[0] + ' in config.json.'),
-					  forward = fwd(prid, cmid))
+                        api.messages.send(
+                            peer_id = prid,
+                            random_id = 0,
+                            message = ('No such parameter as "' + txt.split()[0] + '" in config.json.')
+                            forward = fwd(prid, cmid))
+                            
+
                             
                             
     except Exception:
