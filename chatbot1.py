@@ -79,9 +79,6 @@ while True:
                         
                 
                 if 'бот выкл' in txt.lower() and event.message['from_id'] == 143757001:
-                    cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')
-                    cfg.write(json.dumps(config))
-                    cfg.close()
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Уже вырубаюсь, хозяин!!!', forward = fwd(prid, cmid))
                     api.groups.disableOnline(group_id = "203345016")            #disabling community online
                     sys.exit()          #force turnoff
@@ -126,6 +123,9 @@ while True:
                 if event.message['reply_message']['text'] ==  'Make some changes in config.json:' and event.message['from_id'] == 143757001:
                     if txt.split()[0] in config:
                         config[txt.split()[0]] = int(txt.split()[1])
+                        cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')
+                        cfg.write(json.dumps(config))
+                        cfg.close()
                         api.messages.send(
                             peer_id = prid,
                             random_id = 0,
