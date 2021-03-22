@@ -1,5 +1,5 @@
 $ cat .gitignore
 
 closed.txt
-config.json
+#config.json
 *.jpg
