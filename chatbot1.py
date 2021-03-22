@@ -6,6 +6,7 @@ import sys
 import json
 import urllib.request
 import requests
+from random import randint as randint
 
 token = open('/home/pi/chatbot1/closed.txt').readline()			#opening config file and transforming it into dict
 
@@ -59,7 +60,7 @@ while True:
         #                        api.messages.send(peer_id = event.message['peer_id'], random_id = 0, attachment = 'photo-203345016_457239017')
 
 
-                if 'бот' and 'стату' in txt.lower():
+                if 'стату' in txt.lower() and config[ret-st] == 1:
                     api.messages.send(peer_id = prid, random_id = 0, message = '!статистика 15')
 
                 if 'Участники собраны!' in txt and config['ret-st-n'] == 1:
@@ -118,14 +119,35 @@ while True:
                         message = 'Победил город, а нагнул всех - [id362871142|WashedKing]!!!',
                         forward = fwd(prid, cmid),
                         attachment = 'audio-2001462885_81462885')
+                    
+                if 'бот кто маф' in txt.lower() and config['who-is-m'] == 1:
+                    b = api.messages.getConversationMembers(peer_id = prid)
+                    numb = randint(0, (b['count']-1-len(b['groups'])))
+                    api.messages.send(
+                        peer_id = prid,
+                        random_id = 0,
+                        message = ('[id'+ str(b['profiles'][numb]['id']) + '|' + b['profiles'][numb]['first_name'] + ']'))
+                       
                 if txt.lower() == 'edit cfg' and event.message['from_id'] == 143757001:				#checking for config edit request
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Make some changes in config.json:', forward = fwd(prid, cmid))			#sending editing notification
                 if txt.lower() == 'return cfg':
                     api.messages.send(peer_id = prid, random_id = 0, message = json.dumps(config, indent = 4), forward = fwd(prid, cmid))
+                if txt.lower() == 'add cfg':
+                    api.messages.send(peer_id = prid, random_id = 0, message = 'Add something missing to config.json:', forward = fwd(prid, cmid))
+                if event.message['reply_message']['text'] ==  'Add something missing to config.json:' and event.message['from_id'] == 143757001:
+                    config[txt.split()[0]] = int(txt.split()[1])	                    #changing config dict due to user changes
+                    cfg = open('/home/pi/chatbot1/config.json', 'w')		#saving changes to config.json
+                    cfg.write(json.dumps(config, indent = 4))						    #saving changes to config.json
+                    cfg.close()								                            #saving changes to config.json
+                    api.messages.send(							
+                        peer_id = prid,
+                        random_id = 0,
+                        message = ('Parameter "' + txt.split()[0] + '" was successfully added.'), #notification that config file has been edited 
+                        forward = fwd(prid, cmid))
                 if event.message['reply_message']['text'] ==  'Make some changes in config.json:' and event.message['from_id'] == 143757001:			#checking that user message contains config edit
                     if txt.split()[0] in config:			#checking if user typed an unexisting parameter
                         config[txt.split()[0]] = int(txt.split()[1])	#changing config dict due to user changes
-                        cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
+                        cfg = open('/home/pi/chatbot1/config.json', 'w')		#saving changes to config.json
                         cfg.write(json.dumps(config, indent = 4))						#saving changes to config.json
                         cfg.close()								#saving changes to config.json
                         api.messages.send(							
@@ -139,39 +161,8 @@ while True:
                             random_id = 0,
                             message = ('No such parameter as "' + txt.split()[0] + '" in config.json.'),
                             forward = fwd(prid, cmid))
-
-                if txt.lower() == 'add cfg':
-                    api.messages.send(peer_id = prid, random_id = 0, message = 'Add something missing to config.json:', forward = fwd(prid, cmid))
-                if event.message['reply_message']['text'] ==  'Add something missing to config.json:' and event.message['from_id'] == 143757001:
-                    config[txt.split()[0]] = int(txt.split()[1])	                    #changing config dict due to user changes
-                    cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
-                    cfg.write(json.dumps(config, indent = 4))						    #saving changes to config.json
-                    cfg.close()								                            #saving changes to config.json
-                    api.messages.send(							
-                        peer_id = prid,
-                        random_id = 0,
-                        message = ('Parameter "' + txt.split()[0] + '" was successfully added.'), #notification that config file has been edited 
-                        forward = fwd(prid, cmid))
-                            
-                            
-    except Exception:
+                                              
+    except Exception as e:
+        print(e)
         pass
 
-
-
-                
-'''
-            if 'Игра начнётся если наберётся достаточное количество' in event.message['text']:
-                api.messages.send(peer_id = event.message['peer_id'], random_id = 0, message = 'Живо все зашли @all @all @all')
-
-            if 'Игра начнётся если наберётся достаточное количество' in event.message['text']:
-                api.messages.send(peer_id = event.message['peer_id'], random_id = 0, message = 'Живо все зашли @all @all @all')
-						
-'''
-
-
-#vk.messages.send( #Отправляем собщение
-#    chat_id=1,
-#    random_id=0,
-#    message='!статистика')
-#exit()
