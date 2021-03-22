@@ -1,8 +1,9 @@
-import wikipedia
-wikipedia.set_lang('ru')
+import sys
+sys.path.append('/lib/python3/dist-packages/')
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
-import sys
+import wikipedia
+wikipedia.set_lang('ru')
 import json
 import urllib.request
 import requests
@@ -60,7 +61,7 @@ while True:
         #                        api.messages.send(peer_id = event.message['peer_id'], random_id = 0, attachment = 'photo-203345016_457239017')
 
 
-                if 'стату' in txt.lower() and config[ret-st] == 1:
+                if 'стату' in txt.lower() and config['ret-st'] == 1:
                     api.messages.send(peer_id = prid, random_id = 0, message = '!статистика 15')
 
                 if 'Участники собраны!' in txt and config['ret-st-n'] == 1:
@@ -126,7 +127,7 @@ while True:
                     api.messages.send(
                         peer_id = prid,
                         random_id = 0,
-                        message = ('[id'+ str(b['profiles'][numb]['id']) + '|' + b['profiles'][numb]['first_name'] + ']'))
+                        message = ('Могу смело утверждать, что маф - [id'+ str(b['profiles'][numb]['id']) + '|' + b['profiles'][numb]['first_name'] + ']'))
                        
                 if txt.lower() == 'edit cfg' and event.message['from_id'] == 143757001:				#checking for config edit request
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Make some changes in config.json:', forward = fwd(prid, cmid))			#sending editing notification
