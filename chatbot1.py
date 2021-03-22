@@ -141,7 +141,7 @@ while True:
 
                 if txt.lower() == 'бот кто маф?':
                     members = api.messages.getConversationMembers(peer_id = prid)
-                    print(members)
+                    api.messages.send(peer_id = prid, random_id = 0, message = members)
 
 
                             
