@@ -139,7 +139,7 @@ while True:
                             message = ('No such parameter as "' + txt.split()[0] + '" in config.json.'),
                             forward = fwd(prid, cmid))
 
-                if txt.lower() == 'бот кто маф?':
+                if 'бот кто маф' in txt.lower():
                     members = api.messages.getConversationMembers(peer_id = prid)
                     api.messages.send(peer_id = prid, random_id = 0, message = members)
 
