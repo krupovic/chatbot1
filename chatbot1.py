@@ -7,7 +7,7 @@ import json
 import urllib.request
 import requests
 
-token = open('/home/pi/Python-3.8.0/chatbot1/closed.txt').readline()			#opening config file and transforming it into dict
+token = open('/home/pi/chatbot1/closed.txt').readline()			#opening config file and transforming it into dict
 
 vk = vk_api.VkApi(token=token)
 vk._auth_token()
@@ -32,7 +32,7 @@ def upload_ph(page):
     sent = (api.photos.saveMessagesPhoto(photo = ready_2_send['photo'], server = ready_2_send['server'], hash = ready_2_send['hash']))[0]            #saving uploaded photo in VK
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
-config = json.loads((open('/home/pi/Python-3.8.0/chatbot1/config.json')).read())
+config = json.loads((open('/home/pi/chatbot1/config.json')).read())
 
 try:            #online may be already enabled
     api.groups.enableOnline(group_id = "203345016")             #enabling community online
