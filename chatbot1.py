@@ -62,7 +62,7 @@ while True:
                 if 'бот' and 'стату' in txt.lower():
                     api.messages.send(peer_id = prid, random_id = 0, message = '!статистика 15')
 
-                if 'Участники собраны!' in txt:
+                if 'Участники собраны!' in txt and config['ret-st-n'] == 1:
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Приготовьтесь к очередному сливу от тимы, ребята )))')
                     
                 if 'бот вики' in txt.lower():
@@ -71,7 +71,7 @@ while True:
                         api.messages.send(peer_id = prid, random_id = 0, message = wikipedia.summary(a), forward = fwd(prid, cmid))             #requesting searched page in wikipedia
                         page = wikipedia.page(a)
                         try:
-                            upload_ph(page)             #trying send photo from wikipedia
+                            upload_ph(page)             #trying to send photo from wikipedia
                         except Exception:
                             api.messages.send(peer_id = prid, random_id = 0, message = 'Не получается найти необходимое изображение =)', forward = fwd(prid, cmid))             #photo not found
                     except Exception:
