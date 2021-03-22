@@ -140,11 +140,18 @@ while True:
                             message = ('No such parameter as "' + txt.split()[0] + '" in config.json.'),
                             forward = fwd(prid, cmid))
 
-                if 'бот кто маф' in txt.lower():
-#                    members = api.messages.getConversationMembers(peer_id = prid)
-                    api.messages.send(peer_id = prid, random_id = 0, message = prid)
-
-
+                if txt.lower() == 'add cfg':
+                    api.messages.send(peer_id = prid, random_id = 0, message = 'Add something missing to config.json:', forward = fwd(prid, cmid))
+                if event.message['reply_message']['text'] ==  'Add something missing to config.json:' and event.message['from_id'] == 143757001:
+                    config[txt.split()[0]] = int(txt.split()[1])	                    #changing config dict due to user changes
+                    cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
+                    cfg.write(json.dumps(config, indent = 4))						    #saving changes to config.json
+                    cfg.close()								                            #saving changes to config.json
+                    api.messages.send(							
+                        peer_id = prid,
+                        random_id = 0,
+                        message = ('Parameter "' + txt.split()[0] + '" was successfully added.'), #notification that config file has been edited 
+                        forward = fwd(prid, cmid))
                             
                             
     except Exception:
