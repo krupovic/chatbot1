@@ -1,5 +1,4 @@
 import sys
-sys.path.append('/lib/python3/dist-packages/')
 import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 import wikipedia
@@ -9,7 +8,7 @@ import urllib.request
 import requests
 from random import randint as randint
 
-token = open('/home/pi/chatbot1/closed.txt').readline()			#opening config file and transforming it into dict
+token = open('/home/pi/Python-3.8.0/chatbot1/closed.txt').readline()			#opening config file and transforming it into dict
 
 vk = vk_api.VkApi(token=token)
 vk._auth_token()
@@ -34,7 +33,7 @@ def upload_ph(page):
     sent = (api.photos.saveMessagesPhoto(photo = ready_2_send['photo'], server = ready_2_send['server'], hash = ready_2_send['hash']))[0]            #saving uploaded photo in VK
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
-config = json.loads((open('/home/pi/chatbot1/config.json')).read())
+config = json.loads((open('/home/pi/Python-3.8.0/chatbot1/config.json')).read())
 
 try:            #online may be already enabled
     api.groups.enableOnline(group_id = "203345016")             #enabling community online
@@ -137,7 +136,7 @@ while True:
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Add something missing to config.json:', forward = fwd(prid, cmid))
                 if event.message['reply_message']['text'] ==  'Add something missing to config.json:' and event.message['from_id'] == 143757001:
                     config[txt.split()[0]] = int(txt.split()[1])	                    #changing config dict due to user changes
-                    cfg = open('/home/pi/chatbot1/config.json', 'w')		#saving changes to config.json
+                    cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
                     cfg.write(json.dumps(config, indent = 4))						    #saving changes to config.json
                     cfg.close()								                            #saving changes to config.json
                     api.messages.send(							
@@ -148,7 +147,7 @@ while True:
                 if event.message['reply_message']['text'] ==  'Make some changes in config.json:' and event.message['from_id'] == 143757001:			#checking that user message contains config edit
                     if txt.split()[0] in config:			#checking if user typed an unexisting parameter
                         config[txt.split()[0]] = int(txt.split()[1])	#changing config dict due to user changes
-                        cfg = open('/home/pi/chatbot1/config.json', 'w')		#saving changes to config.json
+                        cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
                         cfg.write(json.dumps(config, indent = 4))						#saving changes to config.json
                         cfg.close()								#saving changes to config.json
                         api.messages.send(							
