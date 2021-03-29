@@ -47,19 +47,7 @@ while True:
                 prid = event.message['peer_id']
                 cmid = event.message['conversation_message_id']
                 row_txt = txt.split('\n')
-                
-                if config['ret-m-pl'] == 1:
-                    if 'Статистика проведённых игр в беседе' in event.message['text']:
-                        for i in range(len(row_txt)):
-                            if 'М.Калинина' in row_txt[i]:
-                                if i - 2 == 1:
-                                    b = 'Маринка сейчас на первом месте, но это ненадолго :))'
-                                else:
-                                    b = 'Маринка сейчас на ' + str(i-2) + ' месте =)))'
-                                api.messages.send(peer_id = prid, random_id = 0, message = b)
-        #                        api.messages.send(peer_id = event.message['peer_id'], random_id = 0, attachment = 'photo-203345016_457239017')
-
-
+              
                 if 'стату' in txt.lower() and config['ret-st'] == 1:
                     api.messages.send(peer_id = prid, random_id = 0, message = '!статистика 15')
 
