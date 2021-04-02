@@ -38,7 +38,7 @@ def translate(st):
     try:
         st = st.split()
         wiki1 = wapi.Wikipedia(language = st[0])
-        pagew = wapi.page(' '.join(st[2:]))
+        pagew = wiki1.page(' '.join(st[2:]))
         lngs  = pagew.langlinks
         result = lngs[st[1]].title
         return result
