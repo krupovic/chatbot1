@@ -170,7 +170,7 @@ while True:
                         api.messages.send(
                                 peer_id = prid,
                                 random_id = 0,
-                                message = ('Yor result is: ' + translate(txt)),
+                                message = ('Your result is: ' + translate(txt)),
                                 forward = fwd(prid, cmid))
                                                               
     except Exception as e:
