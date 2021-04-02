@@ -3,6 +3,7 @@ import vk_api
 from vk_api.bot_longpoll import VkBotLongPoll, VkBotEventType
 import wikipedia
 wikipedia.set_lang('ru')
+import wikipediaapi as wapi
 import json
 import urllib.request
 import requests
@@ -33,6 +34,16 @@ def upload_ph(page):
     sent = (api.photos.saveMessagesPhoto(photo = ready_2_send['photo'], server = ready_2_send['server'], hash = ready_2_send['hash']))[0]            #saving uploaded photo in VK
     api.messages.send(peer_id = prid, random_id = 0, forward = fwd(prid, cmid), attachment = str('photo' + str(sent['owner_id']) + '_' + str(sent['id'])))          #sending photo as message
 
+def translate(st):
+    try:
+        st = st.split()
+        wiki1 = wikipediaapi.Wikipedia(language = st[0])
+        pagew = wapi.page(' '.join(st[2:]))
+        lngs  = pagew.langlinks
+        result = lngs[st[1]].title
+        return result
+    except Exception as err:
+        return repr(err)
 config = json.loads((open('/home/pi/Python-3.8.0/chatbot1/config.json')).read())			#opening config file and transforming it into dict
 
 try:            #online may be already enabled
@@ -66,7 +77,9 @@ while True:
                     except Exception:
                         api.messages.send(peer_id = prid, random_id = 0, message = 'Не получается найти указанный запрос =)', forward = fwd(prid, cmid))            #page not found
                         
-                
+                if 'бот переведи' in txt.lower():
+                    api.messages.send(peer_id = prid, random_id = 0, message = ('Type a statement to translate in format: \n<Translate-from language (ISO)> <Translate-to language (ISO)> <Statement> \nExample: \nen ru Joe Biden') , forward = fwd(prid, cmid))
+                    api.messages.send(peer_id = prid, random_id = 0, message = 'Reply to this message with your request', forward = fwd(prid, cmid))
                 if 'бот выкл' in txt.lower() and event.message['from_id'] == 143757001:
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Уже вырубаюсь, хозяин!!!', forward = fwd(prid, cmid))
                     api.groups.disableOnline(group_id = "203345016")            #disabling community online
@@ -124,34 +137,42 @@ while True:
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Add something missing to config.json:', forward = fwd(prid, cmid))
                 if txt.lower() == 'бот абоба':
                     api.messages.send(peer_id = prid, random_id = 0, message = '&#127344;&#127345;&#127358;&#127345;&#127344;', forward = fwd(prid, cmid))
-                if event.message['reply_message']['text'] ==  'Add something missing to config.json:' and event.message['from_id'] == 143757001:
-                    config[txt.split()[0]] = int(txt.split()[1])	                    #changing config dict due to user changes
-                    cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
-                    cfg.write(json.dumps(config, indent = 4))						    #saving changes to config.json
-                    cfg.close()								                            #saving changes to config.json
-                    api.messages.send(							
-                        peer_id = prid,
-                        random_id = 0,
-                        message = ('Parameter "' + txt.split()[0] + '" was successfully added.'), #notification that config file has been edited 
-                        forward = fwd(prid, cmid))
-                if event.message['reply_message']['text'] ==  'Make some changes in config.json:' and event.message['from_id'] == 143757001:			#checking that user message contains config edit
-                    if txt.split()[0] in config:			#checking if user typed an unexisting parameter
-                        config[txt.split()[0]] = int(txt.split()[1])	#changing config dict due to user changes
+
+                if 'reply_message' in event.message:
+                    if event.message['reply_message']['text'] ==  'Add something missing to config.json:' and event.message['from_id'] == 143757001:
+                        config[txt.split()[0]] = int(txt.split()[1])	                    #changing config dict due to user changes
                         cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
-                        cfg.write(json.dumps(config, indent = 4))						#saving changes to config.json
-                        cfg.close()								#saving changes to config.json
+                        cfg.write(json.dumps(config, indent = 4))						    #saving changes to config.json
+                        cfg.close()								                            #saving changes to config.json
                         api.messages.send(							
                             peer_id = prid,
                             random_id = 0,
-                            message = ('Parameter "' + txt.split()[0] + '" successfully switched to ' + txt.split()[1] + '.'), #notification that config file has been edited 
+                            message = ('Parameter "' + txt.split()[0] + '" was successfully added.'), #notification that config file has been edited 
                             forward = fwd(prid, cmid))
-                    else:
+                    if event.message['reply_message']['text'] ==  'Make some changes in config.json:' and event.message['from_id'] == 143757001:			#checking that user message contains config edit
+                        if txt.split()[0] in config:			#checking if user typed an unexisting parameter
+                            config[txt.split()[0]] = int(txt.split()[1])	#changing config dict due to user changes
+                            cfg = open('/home/pi/Python-3.8.0/chatbot1/config.json', 'w')		#saving changes to config.json
+                            cfg.write(json.dumps(config, indent = 4))						#saving changes to config.json
+                            cfg.close()								#saving changes to config.json
+                            api.messages.send(							
+                                peer_id = prid,
+                                random_id = 0,
+                                message = ('Parameter "' + txt.split()[0] + '" successfully switched to ' + txt.split()[1] + '.'), #notification that config file has been edited 
+                                forward = fwd(prid, cmid))
+                        else:
+                            api.messages.send(
+                                peer_id = prid,
+                                random_id = 0,
+                                message = ('No such parameter as "' + txt.split()[0] + '" in config.json.'),
+                                forward = fwd(prid, cmid))
+                    if event.message['reply_message']['text'] ==  'Reply to this message with your request':
                         api.messages.send(
-                            peer_id = prid,
-                            random_id = 0,
-                            message = ('No such parameter as "' + txt.split()[0] + '" in config.json.'),
-                            forward = fwd(prid, cmid))
-                                              
+                                peer_id = prid,
+                                random_id = 0,
+                                message = ('Yor result is: ' + translate(txt)),
+                                forward = fwd(prid, cmid))
+                                                              
     except Exception as e:
         print(e)
         pass
