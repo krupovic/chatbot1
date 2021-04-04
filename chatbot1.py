@@ -88,7 +88,7 @@ while True:
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Ты не хозяин, не приказывай мне!', forward = fwd(prid, cmid))
                     
 
-                if ('Победила мафия, поздравляем!' in row_txt) and ('[id143757001|П.Крупович]' in txt) and config['win-msg-p-m'] == 1:
+                if ('Победила мафия, поздравляем!' in row_txt) and ('id143757001' in txt) and config['win-msg-p-m'] == 1:
                     api.messages.send(
                         peer_id = prid,
                         random_id = 0,
