@@ -94,7 +94,7 @@ while True:
                         random_id = 0,
                         message = 'Совершенно неудивительно, но победу одержал мафиозный MVP в лице [id143757001|Гения]!',
                         forward = fwd(prid, cmid),
-                        attachment = 'audio-2001823365_67823365')
+                        attachment = 'audio-2001823365_67823365, photo-203345016_457239023')
                     
                 if ('Победил город, поздравляем!' in row_txt) and 'id143757001' in txt and config['win-msg-p-p'] == 1:
                     api.messages.send(
@@ -102,7 +102,7 @@ while True:
                         random_id = 0,
                         message = 'Победил город, MVP встречи - легендарный [id143757001|Mafia King]!',
                         forward = fwd(prid, cmid),
-                        attachment = 'audio-2001823365_67823365')
+                        attachment = 'audio-2001823365_67823365, photo-203345016_457239022')
 
                     
                 if ('Победила мафия, поздравляем!' in row_txt) and 'id362871142' in txt and config['win-msg-v-m'] == 1:
