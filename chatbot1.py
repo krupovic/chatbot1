@@ -174,6 +174,9 @@ while True:
                                 forward = fwd(prid, cmid))
                                                               
     except Exception as e:
-        print(e)
+        if config['debug'] == 1:
+            api.messages.send(peer_id = prid, random_id = 0, message = str(repr(e)))
+        else:
+            print(e)
         pass
 
