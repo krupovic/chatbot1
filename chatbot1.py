@@ -59,7 +59,7 @@ while True:
                 cmid = event.message['conversation_message_id']
                 row_txt = txt.split('\n')
               
-                if ('бот' and 'стату') in txt.lower() and config['ret-st'] == 1:
+                if ('стату' in txt.lower()) and ('бот' in txt.lower()) and config['ret-st'] == 1:
                     api.messages.send(peer_id = prid, random_id = 0, message = '!статистика 15')
 
                 if 'Участники собраны!' in txt and config['ret-st-n'] == 1:
