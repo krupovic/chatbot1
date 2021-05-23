@@ -47,7 +47,7 @@ def translate(st):
 config = json.loads((open('/home/pi/Python-3.8.0/chatbot1/config.json')).read())			#opening config file and transforming it into dict
 
 def delete(msgs):
-        ids = []
+    ids = []
     for el in msgs:
         ids.append(el['conversation_message_id'])
     api.messages.delete(delete_for_all = 1, peer_id = prid, conversation_message_ids = ids)
