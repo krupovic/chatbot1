@@ -46,6 +46,12 @@ def translate(st):
         return repr(err)
 config = json.loads((open('/home/pi/Python-3.8.0/chatbot1/config.json')).read())			#opening config file and transforming it into dict
 
+def delete(msgs):
+        ids = []
+    for el in msgs:
+        ids.append(el['conversation_message_id'])
+    api.messages.delete(delete_for_all = 1, peer_id = prid, conversation_message_ids = ids)
+
 try:            #online may be already enabled
     api.groups.enableOnline(group_id = "203345016")             #enabling community online
 except Exception:
@@ -137,6 +143,14 @@ while True:
                     api.messages.send(peer_id = prid, random_id = 0, message = 'Add something missing to config.json:', forward = fwd(prid, cmid))
                 if txt.lower() == 'бот абоба':
                     api.messages.send(peer_id = prid, random_id = 0, message = '&#127344;&#127345;&#127358;&#127345;&#127344;', forward = fwd(prid, cmid))
+
+                if ('бот удали' in txt.lower()):
+                    if 'reply_message' in event.message:
+                        delete([event.message.reply_message])
+                    elif (event.message['fwd_messages'] != []):
+                        delete(event.message['fwd_messages'])
+                    else:
+                        api.messages.send(peer_id = prid, random_id = 0, message = 'Не получается', forward = fwd(prid, cmid))
 
                 if 'reply_message' in event.message:
                     if event.message['reply_message']['text'] ==  'Add something missing to config.json:' and event.message['from_id'] == 143757001:
