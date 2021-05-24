@@ -165,10 +165,10 @@ while True:
                 if ('бот удали' in txt.lower()):
                     if 'reply_message' in event.message:
                         delete([event.message.reply_message])
-                        delete(event.message)
+                        delete([event.message])
                     elif (event.message['fwd_messages'] != []):
                         delete(event.message['fwd_messages'])
-                        delete(event.message)
+                        delete([event.message])
                     else:
                         send('Не получается', prid, True)
 
