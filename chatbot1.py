@@ -57,8 +57,8 @@ def savecfg(config):
     cfg.write(json.dumps(config, indent = 4))					#saving changes to config.json
     cfg.close()								        #saving changes to config.json
 
-def send(ms: str, prid: int, fwd: bool):
-    if fwd:
+def send(ms: str, prid: int, fwdd: bool):
+    if fwdd:
         api.messages.send(peer_id = prid, random_id = 0, message = ms, forward = fwd(prid, cmid))
     else:
         api.messages.send(peer_id = prid, random_id = 0, message = ms)
