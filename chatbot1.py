@@ -78,7 +78,7 @@ while True:
                 if ('стату' in txt.lower()) and ('бот' in txt.lower()) and config['ret-st'] == 1:
                     send('!статистика 15', prid, False)
 
-                if 'Участники собраны!' in txt: #and config['ret-st-n'] == 1:
+                if 'Участники собраны!' in txt and config['ret-st-n'] == 1:
                     send('Приготовьтесь к очередному сливу от тимы, ребята )))', prid, False)
                     
                 if 'бот вики' in txt.lower():
