@@ -84,7 +84,7 @@ while True:
                 if 'бот вики' in txt.lower():
                     a = ' '.join(txt.lower().split()[2:])
                     try:
-                        api.messages.send(peer_id = prid, random_id = 0, message = wikipedia.summary(a), forward = fwd(prid, cmid))             #requesting searched page in wikipedia
+                        send(wikipedia.summary(a), prid, True)             #requesting searched page in wikipedia
                         page = wikipedia.page(a)
                         try:
                             upload_ph(page)             #trying to send photo from wikipedia
