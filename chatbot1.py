@@ -150,7 +150,7 @@ while True:
                     api.messages.send(peer_id = prid, random_id = 0, message = '&#127344;&#127345;&#127358;&#127345;&#127344;', forward = fwd(prid, cmid))
 
                 if ('cfg edit' in txt.lower()) and event.message['from_id'] == 143757001:			#checking that user message contains config edit
-                        query = txt.lower().strip('cfg edit ').split()
+                        query = txt.lower().split('cfg edit ')[1].split()
                         try:
                             query[1] = int(query[1])
                             if query[0] in config:			#checking if user typed an unexisting parameter
