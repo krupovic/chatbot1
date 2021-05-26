@@ -73,10 +73,10 @@ def online_turnon():
 def main():
     for event in longpoll.listen():         #listening for longpoll api requests
         if event.type == VkBotEventType.MESSAGE_NEW:            
-            txt = event.message['text']
-            prid = event.message['peer_id']
-            cmid = event.message['conversation_message_id']
-            row_txt = txt.split('\n')
+            global txt = event.message['text']
+            global prid = event.message['peer_id']
+            global cmid = event.message['conversation_message_id']
+            global row_txt = txt.split('\n')
           
             if ('стату' in txt.lower()) and ('бот' in txt.lower()) and config['ret-st'] == 1:
                 send('!статистика 15', prid, False)
