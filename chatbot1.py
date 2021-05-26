@@ -64,7 +64,7 @@ def send(ms: str, prid: int, fwdd: bool):
     else:
         api.messages.send(peer_id = prid, random_id = 0, message = ms)
 
-def online_turnon();
+def online_turnon():
     try:            #online may be already enabled
         api.groups.enableOnline(group_id = "203345016")             #enabling community online
     except Exception:
