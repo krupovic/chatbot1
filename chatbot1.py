@@ -44,6 +44,7 @@ def translate(st):
         return result
     except Exception as err:
         return repr(err)
+
 config = json.loads((open('/home/pi/Python-3.8.0/chatbot1/config.json')).read())			#opening config file and transforming it into dict
 
 def delete(msgs):
@@ -62,133 +63,132 @@ def send(ms: str, prid: int, fwdd: bool):
         api.messages.send(peer_id = prid, random_id = 0, message = ms, forward = fwd(prid, cmid))
     else:
         api.messages.send(peer_id = prid, random_id = 0, message = ms)
-try:            #online may be already enabled
-    api.groups.enableOnline(group_id = "203345016")             #enabling community online
-except Exception:
-    pass
+
+def online_turnon();
+    try:            #online may be already enabled
+        api.groups.enableOnline(group_id = "203345016")             #enabling community online
+    except Exception:
+        pass
+
+def main():
+    for event in longpoll.listen():         #listening for longpoll api requests
+        if event.type == VkBotEventType.MESSAGE_NEW:            
+            txt = event.message['text']
+            prid = event.message['peer_id']
+            cmid = event.message['conversation_message_id']
+            row_txt = txt.split('\n')
+          
+            if ('стату' in txt.lower()) and ('бот' in txt.lower()) and config['ret-st'] == 1:
+                send('!статистика 15', prid, False)
+
+            if 'Участники собраны!' in txt and config['ret-st-n'] == 1:
+                send('Приготовьтесь к очередному сливу от тимы, ребята )))', prid, False)
+                
+            if 'бот вики' in txt.lower():
+                a = ' '.join(txt.lower().split()[2:])
+                try:
+                    send(wikipedia.summary(a), prid, True)             #requesting searched page in wikipedia
+                    page = wikipedia.page(a)
+                    try:
+                        upload_ph(page)             #trying to send photo from wikipedia
+                    except Exception:
+                        send('Не получается найти необходимое изображение =)', prid, True)             #photo not found
+                except Exception:
+                    send('Не получается найти указанный запрос =)', prid, True)            #page not found
+                    
+            if 'бот переведи' in txt.lower():
+                send('Type a statement to translate in format: \n<Translate-from language (ISO)> <Translate-to language (ISO)> <Statement> \nExample: \nen ru Joe Biden', prid, True)
+                send('Reply to this message with your request', prid, True)
+            if 'бот выкл' in txt.lower() and event.message['from_id'] == 143757001:
+                api.messages.send(peer_id = prid, random_id = 0, message = 'Уже вырубаюсь, хозяин!!!', forward = fwd(prid, cmid))
+                api.groups.disableOnline(group_id = "203345016")            #disabling community online
+                sys.exit()          #force turnoff
+            elif 'бот выкл' in txt.lower() and event.message['from_id'] != 143757001:
+                send('Ты не хозяин, не приказывай мне!', prid, True)
+                
+
+            if ('Победила мафия, поздравляем!' in row_txt) and ('id143757001' in txt) and config['win-msg-p-m'] == 1:
+                api.messages.send(
+                    peer_id = prid,
+                    random_id = 0,
+                    message = 'Совершенно неудивительно, но победу одержал мафиозный MVP в лице [id143757001|Гения]!',
+                    forward = fwd(prid, cmid),
+                    attachment = ['audio-2001823365_67823365', 'photo-203345016_457239023'])
+                
+            if ('Победил город, поздравляем!' in row_txt) and 'id143757001' in txt and config['win-msg-p-p'] == 1:
+                api.messages.send(
+                    peer_id = prid,
+                    random_id = 0,
+                    message = 'Победил город, MVP встречи - легендарный [id143757001|Mafia King]!',
+                    forward = fwd(prid, cmid),
+                    attachment = ['audio-2001823365_67823365', 'photo-203345016_457239024'])
+
+                
+            if ('Победила мафия, поздравляем!' in row_txt) and 'id362871142' in txt and config['win-msg-v-m'] == 1:
+                api.messages.send(
+                    peer_id = prid,
+                    random_id = 0,
+                    message = 'Забыли кто отец этой игры? Напомню! Это - неотразимый [id362871142|MVP]!',
+                    forward = fwd(prid, cmid),
+                    attachment = 'audio-2001462885_81462885')
+                
+            elif ('Победил город, поздравляем!' in row_txt) and 'id362871142' in txt and config['win-msg-v-p'] == 1:
+                api.messages.send(
+                    peer_id = prid,
+                    random_id = 0,
+                    message = 'Победил город, а нагнул всех - [id362871142|WashedKing]!!!',
+                    forward = fwd(prid, cmid),
+                    attachment = 'audio-2001462885_81462885')
+                
+            if 'бот кто маф' in txt.lower() and config['who-is-m'] == 1:
+                b = api.messages.getConversationMembers(peer_id = prid)
+                numb = randint(0, (b['count']-1-len(b['groups'])))
+                send(f'Могу смело утверждать, что маф - [id{b["profiles"][numb]["id"]} | {b["profiles"][numb]["first_name"]} ]', prid, True)
+                   
+            if txt.lower() == 'return cfg':
+                send(json.dumps(config, indent = 4), prid, True)
+            if txt.lower() == 'add cfg':
+                api.messages.send(peer_id = prid, random_id = 0, message = 'Add something missing to config.json:', forward = fwd(prid, cmid))
+            if txt.lower() == 'бот абоба' and config['aboba'] == 1:
+                api.messages.send(peer_id = prid, random_id = 0, message = '&#127344;&#127345;&#127358;&#127345;&#127344;', forward = fwd(prid, cmid))
+
+            if ('cfg edit' in txt.lower()) and event.message['from_id'] == 143757001:			#checking that user message contains config edit
+                    query = txt.lower().split('cfg edit ')[1].split()
+                    try:
+                        query[1] = int(query[1])
+                        if query[0] in config:			#checking if user typed an unexisting parameter
+                            config[query[0]] = int(query[1])	#changing config dict due to user changes
+                            savecfg(config)							#saving changes to config.json
+                            send(f'Parameter "{query[0]}" successfully switched to {query[1]}.', prid, True) #notification that config file has been edited 
+                        else:
+                            send(f'No such parameter as "{query[0]}" in config.json.', prid, True)
+                    except Exception:
+                        send('Argument must be 1 or 0, not str', prid, True)
+
+            if ('бот удали' in txt.lower()):
+                if 'reply_message' in event.message:
+                    delete([event.message.reply_message])
+                    delete(event.message)
+                elif (event.message['fwd_messages'] != []):
+                    delete(event.message['fwd_messages'])
+                    delete(event.message)
+                else:
+                    send('Не получается', prid, True)
+
+            if 'reply_message' in event.message:
+                if event.message['reply_message']['text'] ==  'Add something missing to config.json:' and event.message['from_id'] == 143757001:
+                    config[txt.split()[0]] = int(txt.split()[1])	                    #changing config dict due to user changes
+                    savecfg(config)								                            #saving changes to config.json
+                    send(f'Parameter "{txt.split()[0]}" was successfully added.', prid, True)
+
+                if event.message['reply_message']['text'] ==  'Reply to this message with your request':
+                    send(f'Your result is: {translate(txt)}', prid, True)                                                              
+
+online_turnon()
 while True:
     try:
-        for event in longpoll.listen():         #listening for longpoll api requests
-            if event.type == VkBotEventType.MESSAGE_NEW:            
-                txt = event.message['text']
-                prid = event.message['peer_id']
-                cmid = event.message['conversation_message_id']
-                row_txt = txt.split('\n')
-              
-                if ('стату' in txt.lower()) and ('бот' in txt.lower()) and config['ret-st'] == 1:
-                    send('!статистика 15', prid, False)
+        main()
 
-                if 'Участники собраны!' in txt and config['ret-st-n'] == 1:
-                    send('Приготовьтесь к очередному сливу от тимы, ребята )))', prid, False)
-                    
-                if 'бот вики' in txt.lower():
-                    a = ' '.join(txt.lower().split()[2:])
-                    try:
-                        send(wikipedia.summary(a), prid, True)             #requesting searched page in wikipedia
-                        page = wikipedia.page(a)
-                        try:
-                            upload_ph(page)             #trying to send photo from wikipedia
-                        except Exception:
-                            send('Не получается найти необходимое изображение =)', prid, True)             #photo not found
-                    except Exception:
-                        send('Не получается найти указанный запрос =)', prid, True)            #page not found
-                        
-                if 'бот переведи' in txt.lower():
-                    send('Type a statement to translate in format: \n<Translate-from language (ISO)> <Translate-to language (ISO)> <Statement> \nExample: \nen ru Joe Biden', prid, True)
-                    send('Reply to this message with your request', prid, True)
-                if 'бот выкл' in txt.lower() and event.message['from_id'] == 143757001:
-                    api.messages.send(peer_id = prid, random_id = 0, message = 'Уже вырубаюсь, хозяин!!!', forward = fwd(prid, cmid))
-                    api.groups.disableOnline(group_id = "203345016")            #disabling community online
-                    sys.exit()          #force turnoff
-                elif 'бот выкл' in txt.lower() and event.message['from_id'] != 143757001:
-                    send('Ты не хозяин, не приказывай мне!', prid, True)
-                    
-
-                if ('Победила мафия, поздравляем!' in row_txt) and ('id143757001' in txt) and config['win-msg-p-m'] == 1:
-                    api.messages.send(
-                        peer_id = prid,
-                        random_id = 0,
-                        message = 'Совершенно неудивительно, но победу одержал мафиозный MVP в лице [id143757001|Гения]!',
-                        forward = fwd(prid, cmid),
-                        attachment = ['audio-2001823365_67823365', 'photo-203345016_457239023'])
-                    
-                if ('Победил город, поздравляем!' in row_txt) and 'id143757001' in txt and config['win-msg-p-p'] == 1:
-                    api.messages.send(
-                        peer_id = prid,
-                        random_id = 0,
-                        message = 'Победил город, MVP встречи - легендарный [id143757001|Mafia King]!',
-                        forward = fwd(prid, cmid),
-                        attachment = ['audio-2001823365_67823365', 'photo-203345016_457239024'])
-
-                    
-                if ('Победила мафия, поздравляем!' in row_txt) and 'id362871142' in txt and config['win-msg-v-m'] == 1:
-                    api.messages.send(
-                        peer_id = prid,
-                        random_id = 0,
-                        message = 'Забыли кто отец этой игры? Напомню! Это - неотразимый [id362871142|MVP]!',
-                        forward = fwd(prid, cmid),
-                        attachment = 'audio-2001462885_81462885')
-                    
-                elif ('Победил город, поздравляем!' in row_txt) and 'id362871142' in txt and config['win-msg-v-p'] == 1:
-                    api.messages.send(
-                        peer_id = prid,
-                        random_id = 0,
-                        message = 'Победил город, а нагнул всех - [id362871142|WashedKing]!!!',
-                        forward = fwd(prid, cmid),
-                        attachment = 'audio-2001462885_81462885')
-                    
-                if 'бот кто маф' in txt.lower() and config['who-is-m'] == 1:
-                    b = api.messages.getConversationMembers(peer_id = prid)
-                    numb = randint(0, (b['count']-1-len(b['groups'])))
-                    send(f'Могу смело утверждать, что маф - [id{b["profiles"][numb]["id"]} | {b["profiles"][numb]["first_name"]} ]', prid, True)
-                       
-                if txt.lower() == 'return cfg':
-                    send(json.dumps(config, indent = 4), prid, True)
-                if txt.lower() == 'add cfg':
-                    api.messages.send(peer_id = prid, random_id = 0, message = 'Add something missing to config.json:', forward = fwd(prid, cmid))
-                if txt.lower() == 'бот абоба' and config['aboba'] == 1:
-                    api.messages.send(peer_id = prid, random_id = 0, message = '&#127344;&#127345;&#127358;&#127345;&#127344;', forward = fwd(prid, cmid))
-
-                if ('cfg edit' in txt.lower()) and event.message['from_id'] == 143757001:			#checking that user message contains config edit
-                        query = txt.lower().split('cfg edit ')[1].split()
-                        try:
-                            query[1] = int(query[1])
-                            if query[0] in config:			#checking if user typed an unexisting parameter
-                                config[query[0]] = int(query[1])	#changing config dict due to user changes
-                                savecfg(config)							#saving changes to config.json
-                                send(f'Parameter "{query[0]}" successfully switched to {query[1]}.', prid, True) #notification that config file has been edited 
-                            else:
-                                send(f'No such parameter as "{query[0]}" in config.json.', prid, True)
-                        except Exception:
-                            send('Argument must be 1 or 0, not str', prid, True)
-
-                if ('бот удали' in txt.lower()):
-                    if 'reply_message' in event.message:
-                        delete([event.message.reply_message])
-                        delete([event.message])
-                    elif (event.message['fwd_messages'] != []):
-                        delete(event.message['fwd_messages'])
-                        delete([event.message])
-                    else:
-                        send('Не получается', prid, True)
-
-                if 'reply_message' in event.message:
-                    if event.message['reply_message']['text'] ==  'Add something missing to config.json:' and event.message['from_id'] == 143757001:
-                        config[txt.split()[0]] = int(txt.split()[1])	                    #changing config dict due to user changes
-                        savecfg(config)								                            #saving changes to config.json
-                        api.messages.send(							
-                            peer_id = prid,
-                            random_id = 0,
-                            message = (f'Parameter "{txt.split()[0]}" was successfully added.'), #notification that config file has been edited 
-                            forward = fwd(prid, cmid))
-
-                    if event.message['reply_message']['text'] ==  'Reply to this message with your request':
-                        api.messages.send(
-                                peer_id = prid,
-                                random_id = 0,
-                                message = (f'Your result is: {translate(txt)}'),
-                                forward = fwd(prid, cmid))
-                                                              
     except Exception as e:
         if config['debug'] == 1:
             api.messages.send(peer_id = prid, random_id = 0, message = str(repr(e)))
