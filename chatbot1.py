@@ -147,7 +147,7 @@ def main():
             if 'бот кто маф' in txt.lower() and config['who-is-m'] == 1:
                 b = api.messages.getConversationMembers(peer_id = prid)
                 numb = randint(0, (b['count']-1-len(b['groups'])))
-                send(f'Могу смело утверждать, что маф - [id{b["profiles"][numb]["id"]} | {b["profiles"][numb]["first_name"]} ]', prid, True)
+                send(f'Могу смело утверждать, что маф - [id{b["profiles"][numb]["id"]}|{b["profiles"][numb]["first_name"]}]', prid, True)
                    
             if txt.lower() == 'return cfg':
                 send(json.dumps(config, indent = 4), prid, True)
