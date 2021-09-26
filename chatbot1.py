@@ -179,7 +179,7 @@ def main():
                 else:
                     send('Не получается', prid, True)
 
-            if ('глебко' in txt.lower()):
+            if ('глебко' in txt.lower()) and (config['resp_phys'] == 1):
                 send('Мать физики', prid, True)
 
             if 'reply_message' in event.message:
