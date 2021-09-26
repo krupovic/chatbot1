@@ -179,6 +179,9 @@ def main():
                 else:
                     send('Не получается', prid, True)
 
+            if ('глебко' in txt.lower()):
+                send('Мать физики', prid, True)
+
             if 'reply_message' in event.message:
                 if event.message['reply_message']['text'] ==  'Add something missing to config.json:' and event.message['from_id'] == 143757001:
                     config[txt.split()[0]] = int(txt.split()[1])	                    #changing config dict due to user changes
